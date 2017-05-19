@@ -1,6 +1,10 @@
-# Machine Learning scripts
+# Random Forest and SVM classifier on k-mer features of JunD peaks
 
-This is a place to put all rough scripts and prototypes of scripts that are yet to be converted to final product. These may be tailored to the specific task and also may be quick scripts put together just to run a machine learning algorithm on a dataset.
+## Random Forest and SVM classifier
+* IPython notebook to train random forest and SVM models using sklearn on k-mer count features of peaks vs flanks
+* 50:50 split of training and test sets with flanks as negative set
+* Assumes peaks and flanks are provided in a tsv file with peaks on the top rows followed by flanks below them
+* Random forest and SVM (RBF kernel) both use default params
 
 ## Kmer Count Converter
 Function to convert a given set of sequences into a k-mer count representation. Can also specify wildcard and number of wildcard characters in k-mers.
@@ -57,5 +61,4 @@ Arguments description:
   input_fasta           fasta file containing input set of sequences
   output_fasta           output fasta file that contains only the subset of sequences that are present in the ids_file  
 ```
-
 
