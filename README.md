@@ -43,5 +43,19 @@ Arguments description:
   output_file           output fasta file containing mutated sequences (fasta sequence headers contain info on reference sequence, position and type of substitution made  
 ```
 
+## Subsetting a FASTA file
+Function to retrieve a subset of sequences from a fasta file given a set of ids
+
+```
+python extract_sequences_from_fasta.py ids_file input_fasta output_fasta
+```
+
+Arguments description:
+
+```
+  ids_file              ids to be extracted from the fasta input file
+  input_fasta           fasta file containing input set of sequences
+  output_fasta           output fasta file that contains only the subset of sequences that are present in the ids_file  
+```
 
 
