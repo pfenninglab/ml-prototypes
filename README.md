@@ -28,3 +28,20 @@ Arguments description:
   -vo KMER_VOCAB_OUT, --kmer-vocab-out KMER_VOCAB_OUT
                         file to output kmer vocabulary
 ```
+
+## Sequence Mutator
+Function to perform mutations in input sequences such that each output sequence each contains one substitution as compared to the reference input sequence.
+```
+python mutate_sequences.py input_fasta mutation_freq output_file
+```
+
+Arguments description:
+
+```
+  input_fasta           reference sequences to be mutated
+  mutation_freq         mutation frequency per nucleotide (if 2.0 then there will be 2 mutations per nucleotide in the input sequences)
+  output_file           output fasta file containing mutated sequences (fasta sequence headers contain info on reference sequence, position and type of substitution made  
+```
+
+
+
