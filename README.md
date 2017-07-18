@@ -9,4 +9,10 @@ This is a place to put all rough scripts and prototypes of scripts that are yet 
 * Script to extract a subset of sequences from a fasta file
 * Ipython Notebook to run a random forest and SVM classifier on k-mer representations of JUND ChIP-Seq peaks
 
+## Jemmie 3expHG DanQ Like Model
 
+* Ipython Notebook that contains all code including preprocessing and model training/testing on cell type specific H3K27ac peaks from the 5 control samples
+* Dependency on ucscgenome, intervaltree, pandas
+* Extracts peak data from narrowPeak bed files
+* For each bin (currently 200 bp) in genome, calculate binary label based on condition whether bin lies at least half in peaks (uses interval tree)
+* Train a DanQ-like model
