@@ -1,0 +1,17 @@
+#!/bin/bash
+
+
+#SBATCH -p gpu
+#SBATCH --gres=gpu:1
+#SBATCH -c 1
+#SBATCH --mem=84G
+#SBATCH -o log_train_danq_%A.out
+#SBATCH -e err_train_danq_%A.out
+
+
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=eramamur@andrew.cmu.edu
+
+cd /home/eramamur/Github_repos/ml-prototypes/3exphg_danq_like
+
+python train_danq.py
