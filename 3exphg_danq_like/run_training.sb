@@ -4,7 +4,7 @@
 #SBATCH -p gpu
 #SBATCH --gres=gpu:1
 #SBATCH -c 1
-#SBATCH --mem=84G
+#SBATCH --mem=92G
 #SBATCH -o log_train_danq_%A.out
 #SBATCH -e err_train_danq_%A.out
 
