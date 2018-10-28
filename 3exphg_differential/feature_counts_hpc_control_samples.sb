@@ -1,0 +1,40 @@
+#!/bin/bash
+
+#SBATCH -a 1-18
+#SBATCH -p pfen1
+#SBATCH -N 1
+#SBATCH -n 1
+
+#SBATCH --mem=10G
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=eramamur@andrew.cmu.edu
+
+MY_FOLDER=/projects/pfenninggroup/jemmie/ml_3exphg/feature_counting_200bp_intervals/hpc_control_counts
+cd $MY_FOLDER
+
+PEAKPATH=/projects/pfenninggroup/jemmie/gwyn_hpc_3exphg/peaks/controls
+
+MYID=$((SLURM_ARRAY_TASK_ID-1))
+markers=(NeuN+ NeuN-_PU.1- PU.1+)
+celltypes=(Neuron Glia Microglia)
+ids=(10288185 10514454 11409232 20104101 21142003 21412626)
+half_ids=(8185 4454 9232 4101 2003 2626)
+
+num_cts=${#celltypes[@]}
+
+marker=${markers[$((MYID%num_cts))]}
+celltype=${celltypes[$((MYID%num_cts))]}
+id=${ids[$((MYID/num_cts))]}
+half_id=${half_ids[$((MYID/num_cts))]}
+
+ANNOTFILE=/projects/pfenninggroup/jemmie/ml_resources/hg19_200bp_bins_corresponding_to_filtered_1000bp_bins.saf
+FEATURECOUNTS=/home/japostol/bin/subread/bin/featureCounts
+
+${FEATURECOUNTS} -F SAF -a ${ANNOTFILE} -o H3K27ac_${marker}_${half_id}_hpc_1.count.txt ${PEAKPATH}/${id}/${celltype}/align/rep1/H3K27ac_${marker}_${half_id}_hpc_1.nodup.bam
+${FEATURECOUNTS} -F SAF -a ${ANNOTFILE} -o H3K27ac_${marker}_${half_id}_hpc_2.count.txt ${PEAKPATH}/${id}/${celltype}/align/rep2/H3K27ac_${marker}_${half_id}_hpc_2.nodup.bam
+awk 'NR>1 {print $7}' H3K27ac_${marker}_${half_id}_hpc_1.count.txt > H3K27ac_${marker}_${half_id}_hpc_1.countSimp.txt
+awk 'NR>1 {print $7}' H3K27ac_${marker}_${half_id}_hpc_2.count.txt > H3K27ac_${marker}_${half_id}_hpc_2.countSimp.txt
+
+
+
+

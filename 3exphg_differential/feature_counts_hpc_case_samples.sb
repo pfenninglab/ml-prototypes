@@ -1,0 +1,55 @@
+#!/bin/bash
+
+#SBATCH -a 1-30
+#SBATCH -p pfen1
+#SBATCH -N 1
+#SBATCH -n 1
+
+#SBATCH --mem=10G
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=eramamur@andrew.cmu.edu
+
+MY_FOLDER=/projects/pfenninggroup/jemmie/ml_3exphg/feature_counting_200bp_intervals/hpc_case_counts
+cd $MY_FOLDER
+
+MYID=$SLURM_ARRAY_TASK_ID
+
+PEAKPATH=/projects/pfenninggroup/jemmie/gwyn_hpc_3exphg/peaks/cases
+MYID=$((SLURM_ARRAY_TASK_ID-1))
+markers=(NeuN+ NeuN-_PU.1- PU.1+)
+celltypes=(Neuron Glia Microglia)
+
+ids=(10101327 10222853 10290265 20170043 20223617 20254876 20261901 20263921 21156815 21172121)
+half_ids=(1327 2853 0265 70043 3617 4876 61901 3921 6815 2121)
+
+num_cts=${#celltypes[@]}
+
+marker=${markers[$((MYID%num_cts))]}
+celltype=${celltypes[$((MYID%num_cts))]}
+id=${ids[$((MYID/num_cts))]}
+half_id=${half_ids[$((MYID/num_cts))]}
+
+ANNOTFILE=/projects/pfenninggroup/jemmie/ml_resources/hg19_200bp_bins_corresponding_to_filtered_1000bp_bins.saf
+FEATURECOUNTS=/home/japostol/bin/subread/bin/featureCounts
+
+if [ $id = 21172121 ] && [ $celltype = Glia ] 
+then
+  echo $id
+  echo $celltype
+  echo "IGNORED because peak file didn't pass pipeline error due to low RSC"
+elif [ $id = 20261901 ] && [ $celltype = Microglia ]
+then
+  echo $id
+  echo $celltype
+  echo "IGNORED because peak file didn't pass pipeline error due to low RSC"
+elif [ $id = 10290265 ] && [ $celltype = Microglia ]
+then
+  echo $id
+  echo $celltype
+  echo "IGNORED because peak file didn't pass pipeline error due to low RSC"
+else
+  ${FEATURECOUNTS} -F SAF -a ${ANNOTFILE} -o H3K27ac_${marker}_${half_id}_hpc_1.count.txt ${PEAKPATH}/${id}/${celltype}/align/rep1/H3K27ac_${marker}_${half_id}_hpc_1.nodup.bam
+  ${FEATURECOUNTS} -F SAF -a ${ANNOTFILE} -o H3K27ac_${marker}_${half_id}_hpc_2.count.txt ${PEAKPATH}/${id}/${celltype}/align/rep2/H3K27ac_${marker}_${half_id}_hpc_2.nodup.bam
+  awk 'NR>1 {print $7}' H3K27ac_${marker}_${half_id}_hpc_1.count.txt > H3K27ac_${marker}_${half_id}_hpc_1.countSimp.txt
+  awk 'NR>1 {print $7}' H3K27ac_${marker}_${half_id}_hpc_2.count.txt > H3K27ac_${marker}_${half_id}_hpc_2.countSimp.txt
+fi

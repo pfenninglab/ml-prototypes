@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#SBATCH -p gpu
+#SBATCH --gres=gpu:1
+#SBATCH -c 1
+#SBATCH --mem=30G
+
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=eramamur@andrew.cmu.edu
+
+
+
+#SBATCH -o slurm-%A.out
+#SBATCH -e slurm-%A.err 
+
+cd /home/eramamur/Github_repos/ml-prototypes/cortex_liver_diff_peaks
+python danq.py @/projects/pfenninggroup/machineLearningForComputationalBiology/regElEvoGrant/DifferentialPeakAnalysis/danq_args/danq_corliv_even_lower_lr.args

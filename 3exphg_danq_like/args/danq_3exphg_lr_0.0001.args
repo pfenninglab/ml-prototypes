@@ -1,0 +1,12 @@
+-xt
+/home/eramamur/jemmie_3exphg_danq_input_data/X_train.npy
+-yt
+/home/eramamur/jemmie_3exphg_danq_input_data/Y_train.npy
+-xv
+/home/eramamur/jemmie_3exphg_danq_input_data/X_valid.npy
+-yv
+/home/eramamur/jemmie_3exphg_danq_input_data/Y_valid.npy
+-o
+saved_models/danq_3exphg_lr_0.0001.hdf5
+-lr
+0.0001

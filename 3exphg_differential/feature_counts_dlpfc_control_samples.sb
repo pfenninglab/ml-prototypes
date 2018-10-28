@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#SBATCH -a 1-35
+#SBATCH -p pfen1
+#SBATCH -N 1
+#SBATCH -n 1
+
+#SBATCH --mem=10G
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=eramamur@andrew.cmu.edu
+
+MY_FOLDER=/projects/pfenninggroup/jemmie/ml_3exphg/feature_counting_200bp_intervals/dlpfc_control_counts
+cd $MY_FOLDER
+
+MYID=$SLURM_ARRAY_TASK_ID
+
+PEAKPATH=/projects/pfenninggroup/jemmie/3expHg/pipeline_peaks/controls
+FULLBAMNAMES=${PEAKPATH}/nodup_bam_file_names_full.txt
+BAMNAMES=${PEAKPATH}/nodup_bam_file_names.txt
+
+FULLBAMNAME=$(awk "NR==${MYID}" $FULLBAMNAMES)
+BAMNAME=$(awk "NR==${MYID}" $BAMNAMES)
+
+ANNOTFILE=/projects/pfenninggroup/jemmie/ml_resources/hg19_200bp_bins_corresponding_to_filtered_1000bp_bins.saf
+FEATURECOUNTS=/home/japostol/bin/subread/bin/featureCounts
+
+${FEATURECOUNTS} -F SAF -a ${ANNOTFILE} -o ${BAMNAME}.count.txt ${FULLBAMNAME}
+
+awk 'NR>1 {print $7}' ${BAMNAME}.count.txt > ${BAMNAME}.countSimp.txt
+

@@ -14,4 +14,4 @@
 
 cd /home/eramamur/Github_repos/ml-prototypes/3exphg_danq_like
 
-python danq.py @test_danq_train.args
+python danq.py @args/danq_3exphg_lr_0.0001.args

@@ -8,7 +8,7 @@ from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.pooling import MaxPooling1D
 from keras.layers.wrappers import Bidirectional
 from keras.layers.recurrent import LSTM
-from keras.callbacks import ModelCheckpoint
+from keras.callbacks import ModelCheckpoint, EarlyStopping
 
 from keras import optimizers
 
@@ -45,8 +45,8 @@ def get_danq_model(numLabels, numConvFilters=320, poolingDropout=0.2, brnnDropou
     model.add(Dense(units=numLabels))
     model.add(Activation('sigmoid'))
     
-    rmsProp = optimizers.RMSprop(lr=learningRate, rho=0.9, epsilon=1e-08, decay=0.0)
-    model.compile(loss='binary_crossentropy', optimizer=rmsProp, metrics=['accuracy'])
+    optim = optimizers.RMSprop(lr=learningRate, rho=0.9, epsilon=1e-08, decay=0.0)
+    model.compile(loss='binary_crossentropy', optimizer=optim, metrics=['accuracy'])
 
     return model
 
@@ -67,9 +67,9 @@ def train_danq_model(modelOut,
     model.summary()
     checkpointer = ModelCheckpoint(filepath=modelOut,
                                    verbose=1, save_best_only=True)
-
+    earlystopper = EarlyStopping(monitor='val_loss', min_delta=0, patience=numEpochs, verbose=0, mode='auto')
     model.fit(x=X_train, y=Y_train, batch_size=batchSize, epochs=numEpochs, shuffle=True, verbose=1, validation_data = (X_valid, Y_valid),
-              initial_epoch=0, callbacks=[checkpointer])
+              initial_epoch=0, callbacks=[checkpointer, earlystopper])
     
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description='Train a DanQ model', fromfile_prefix_chars='@')
@@ -78,12 +78,12 @@ if __name__=="__main__":
     parser.add_argument('-xv', '--xvalid', help='npy file containing validation data', required=True)
     parser.add_argument('-yv', '--yvalid', help='npy file containing validation labels', required=True)
     parser.add_argument('-o', '--model-out', help='hdf5 file path for output', required=True)
-    parser.add_argument('-b', '--batch-size', type=int, help='mini-batch size for training', required=False)
-    parser.add_argument('-e', '--num-epochs', type=int, help='number of epochs to train', required=False)
-    parser.add_argument('-c', '--num-conv-filters', type=int, help='number of convolutional filters to use', required=False)
-    parser.add_argument('-pdrop', '--pool-dropout-rate', type=float, help='dropout rate for pooling layer', required=False)
-    parser.add_argument('-bdrop', '--brnn-dropout-rate', type=float, help='dropout rate for B-LSTM layer', required=False)
-    parser.add_argument('-lr', '--learning-rate', type=float, help='learning rate for rmsprop optimizer', required=False)
+    parser.add_argument('-b', '--batch-size', type=int, help='mini-batch size for training', required=False, default=100)
+    parser.add_argument('-e', '--num-epochs', type=int, help='number of epochs to train', required=False, default=60)
+    parser.add_argument('-c', '--num-conv-filters', type=int, help='number of convolutional filters to use', required=False, default=320)
+    parser.add_argument('-pdrop', '--pool-dropout-rate', type=float, help='dropout rate for pooling layer', required=False, default=0.2)
+    parser.add_argument('-bdrop', '--brnn-dropout-rate', type=float, help='dropout rate for B-LSTM layer', required=False, default=0.5)
+    parser.add_argument('-lr', '--learning-rate', type=float, help='learning rate for rmsprop optimizer', required=False, default=0.001)
     
     args = parser.parse_args()
     
