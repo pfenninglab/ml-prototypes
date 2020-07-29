@@ -33,6 +33,8 @@ def generate_summit_centered_output(infile, length, outfile, chromSizesFile):
     peaks_info =  peaks_info[peaks_info['START']>=0]
     peaks_info = peaks_info[peaks_info['END']<=[chromSizes[chrom] for chrom in peaks_info['CHR']]]
     
+    peaks_info = peaks_info.astype({'START': 'int', 'END': 'int'})
+
     peaks_info.to_csv(outfile,
                       compression='gzip',
                       sep='\t',
