@@ -9,6 +9,7 @@ from scipy.stats import pearsonr, spearmanr
 from keras import optimizers
 import keras.backend as K
 import keras.metrics
+from keras import regularizers
 
 def pearson_correlation(x, y):
     n = K.sum(K.ones_like(x))
@@ -30,9 +31,9 @@ def pearson_correlation(x, y):
 keras.metrics.pearson_correlation = pearson_correlation
 
 
-def get_model(numLabels, numConvLayers, numConvFilters, preLastLayerUnits, poolingDropout, learningRate, momentum, length):
+def get_model(numLabels, numConvLayers, numConvFilters, preLastLayerUnits, poolingDropout, learningRate, momentum, length, kernelSize,regularization):
     model = Sequential()
-
+	
     conv1_layer = Conv1D(input_shape=(length, 4),
                         padding="valid",
                         strides=1,
@@ -43,14 +44,26 @@ def get_model(numLabels, numConvLayers, numConvFilters, preLastLayerUnits, pooli
 
 
     model.add(conv1_layer)
+    reg="None"
+    if regularization=='l1':
+        reg=regularizers.l1(0.0001)
 
     for i in range(numConvLayers-1):
-        convn_layer = Conv1D(padding="valid",
-                        strides=1,
-                        activation="relu",
-                        kernel_size=8,
-                        filters=numConvFilters,
-                        use_bias=True)
+        if reg=="None":
+            convn_layer = Conv1D(padding="valid",
+                            strides=1,
+                            activation="relu",
+                            kernel_size=kernelSize,
+                            filters=numConvFilters,
+                            use_bias=True)
+        else:
+            convn_layer = Conv1D(padding="valid",
+                            strides=1,
+                            activation="relu",
+                            kernel_size=kernelSize,
+                            filters=numConvFilters,
+                            use_bias=True,
+                            activity_regularizer=reg)
         model.add(convn_layer)
     
 
@@ -81,13 +94,13 @@ def train_model(modelOut,
                      learningRate,
                      momentum,
                      length,
-                     pretrainedModel,
+                     pretrainedModel,kernelSize,regularization
                     ):
     numLabels = Y_train.shape[1]
     if pretrainedModel:
         model = load_model(pretrainedModel)
     else:
-        model = get_model(numLabels, numConvLayers, numConvFilters, preLastLayerUnits, poolingDropout, learningRate, momentum, length)
+        model = get_model(numLabels, numConvLayers, numConvFilters, preLastLayerUnits, poolingDropout, learningRate, momentum, length, kernelSize, regularization)
 
     optim = optimizers.SGD(lr=learningRate, momentum=momentum)
     model.compile(loss='mean_squared_error', optimizer=optim, metrics=[pearson_correlation])    
@@ -117,7 +130,8 @@ if __name__=="__main__":
     parser.add_argument('-m', '--momentum', type=float, help='momentum for sgd', required=False, default=0.00)
     parser.add_argument('-l', '--length', type=int, help='length of input nucleotide sequences', required=False, default=1000)
     parser.add_argument('-w', '--pretrained-model', help='path to hdf5 file containing pretrained model', required=False, default=None)
-   
+    parser.add_argument('-ks','--kernel-size',type=int,help="Kernel size",required=False,default=8)
+    parser.add_argument('-r','--regularization',type=str,help="regularization",required=False,default="None")   
     args = parser.parse_args()
     
     X_train = np.load(file=args.xtrain)
@@ -139,5 +153,5 @@ if __name__=="__main__":
                      learningRate=args.learning_rate,
                      momentum=args.momentum,
                      length=args.length,
-                     pretrainedModel=args.pretrained_model,
+                     pretrainedModel=args.pretrained_model,kernelSize=args.kernel_size,regularization=args.regularization
                     )
