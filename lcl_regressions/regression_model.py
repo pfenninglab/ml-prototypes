@@ -30,14 +30,14 @@ def pearson_correlation(x, y):
 keras.metrics.pearson_correlation = pearson_correlation
 
 
-def get_model(numLabels, numConvLayers, numConvFilters, preLastLayerUnits, poolingDropout, learningRate, momentum, length):
+def get_model(numLabels, numConvLayers, numConvFilters, kernelSize, preLastLayerUnits, poolingDropout, learningRate, momentum, length):
     model = Sequential()
 
     conv1_layer = Conv1D(input_shape=(length, 4),
                         padding="valid",
                         strides=1,
                         activation="relu",
-                        kernel_size=8,
+                        kernel_size=kernelSize,
                         filters=1000,
                         use_bias=True)
 
@@ -48,7 +48,7 @@ def get_model(numLabels, numConvLayers, numConvFilters, preLastLayerUnits, pooli
         convn_layer = Conv1D(padding="valid",
                         strides=1,
                         activation="relu",
-                        kernel_size=8,
+                        kernel_size=kernelSize,
                         filters=numConvFilters,
                         use_bias=True)
         model.add(convn_layer)
@@ -76,6 +76,7 @@ def train_model(modelOut,
                      numEpochs,
                      numConvLayers,
                      numConvFilters,
+                     kernelSize,
                      preLastLayerUnits,
                      poolingDropout,
                      learningRate,
@@ -87,7 +88,7 @@ def train_model(modelOut,
     if pretrainedModel:
         model = load_model(pretrainedModel)
     else:
-        model = get_model(numLabels, numConvLayers, numConvFilters, preLastLayerUnits, poolingDropout, learningRate, momentum, length)
+        model = get_model(numLabels, numConvLayers, numConvFilters, kernelSize, preLastLayerUnits, poolingDropout, learningRate, momentum, length)
 
     optim = optimizers.SGD(lr=learningRate, momentum=momentum)
     model.compile(loss='mean_squared_error', optimizer=optim, metrics=[pearson_correlation])    
@@ -111,6 +112,7 @@ if __name__=="__main__":
     parser.add_argument('-e', '--num-epochs', type=int, help='number of epochs to train', required=False, default=60)
     parser.add_argument('-n', '--num-conv-layers', type=int, help='number of convolutional layers to use', required=False, default=4)
     parser.add_argument('-c', '--num-conv-filters', type=int, help='number of convolutional filters to use in layers after the first one', required=False, default=100)
+    parser.add_argument('-k', '--kernel-size', type=int, help='size of convolutional filters to use', required=False, default=8)
     parser.add_argument('-u', '--pre-last-layer-units', type=int, help='number of sigmoid units in the layer before the output layer', required=False, default=100)
     parser.add_argument('-pdrop', '--pool-dropout-rate', type=float, help='dropout rate for pooling layer', required=False, default=0.2)
     parser.add_argument('-lr', '--learning-rate', type=float, help='learning rate for sgd optimizer', required=False, default=0.01)
@@ -134,6 +136,7 @@ if __name__=="__main__":
                      numEpochs=args.num_epochs,
                      numConvLayers=args.num_conv_layers,
                      numConvFilters=args.num_conv_filters,
+                     kernelSize=args.kernel_size,
                      preLastLayerUnits=args.pre_last_layer_units,
                      poolingDropout=args.pool_dropout_rate,
                      learningRate=args.learning_rate,

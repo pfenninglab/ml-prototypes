@@ -38,10 +38,10 @@ if __name__=="__main__":
                                  "REP2_SUMMIT"]
                                 )
 
-    print("Overall correlations")
-    print(rep1_rep2_data.shape)
-    print(pearsonr(rep1_rep2_data["REP1_SIGNAL"], rep1_rep2_data["REP2_SIGNAL"]))
-    print(spearmanr(rep1_rep2_data["REP1_SIGNAL"], rep1_rep2_data["REP2_SIGNAL"]))
+    #print("Overall correlations")
+    #print(rep1_rep2_data.shape)
+    #print(pearsonr(rep1_rep2_data["REP1_SIGNAL"], rep1_rep2_data["REP2_SIGNAL"]))
+    #print(spearmanr(rep1_rep2_data["REP1_SIGNAL"], rep1_rep2_data["REP2_SIGNAL"]))
 
     chr4_rep1_rep2_data = rep1_rep2_data.loc[rep1_rep2_data["CHR"]=="chr4"]
     print("chr4 correlations")
@@ -49,14 +49,14 @@ if __name__=="__main__":
     print(pearsonr(chr4_rep1_rep2_data["REP1_SIGNAL"], chr4_rep1_rep2_data["REP2_SIGNAL"]))
     print(spearmanr(chr4_rep1_rep2_data["REP1_SIGNAL"], chr4_rep1_rep2_data["REP2_SIGNAL"]))
 
-    chrs_training_rep1_rep2_data = rep1_rep2_data.loc[~rep1_rep2_data["CHR"].isin(["chr4", "chr8", "chr9"])]
-    print("Training chr correlations")
-    print(chrs_training_rep1_rep2_data.shape)
-    print(pearsonr(chrs_training_rep1_rep2_data["REP1_SIGNAL"], chrs_training_rep1_rep2_data["REP2_SIGNAL"]))
-    print(spearmanr(chrs_training_rep1_rep2_data["REP1_SIGNAL"], chrs_training_rep1_rep2_data["REP2_SIGNAL"]))
+    #chrs_training_rep1_rep2_data = rep1_rep2_data.loc[~rep1_rep2_data["CHR"].isin(["chr4", "chr8", "chr9"])]
+    #print("Training chr correlations")
+    #print(chrs_training_rep1_rep2_data.shape)
+    #print(pearsonr(chrs_training_rep1_rep2_data["REP1_SIGNAL"], chrs_training_rep1_rep2_data["REP2_SIGNAL"]))
+    #print(spearmanr(chrs_training_rep1_rep2_data["REP1_SIGNAL"], chrs_training_rep1_rep2_data["REP2_SIGNAL"]))
 
-    plt.scatter(chr4_rep1_rep2_data["REP1_SIGNAL"], chr4_rep1_rep2_data["REP2_SIGNAL"], s=5, alpha=0.5)
-    plt.ylabel("DNase signal (GM12878 rep1)")
-    plt.xlabel("DNase signal (GM12878 rep2)")
-    plt.savefig("gm_replicate_concordance.svg")
-    plt.close()
+    #plt.scatter(chr4_rep1_rep2_data["REP1_SIGNAL"], chr4_rep1_rep2_data["REP2_SIGNAL"], s=5, alpha=0.5)
+    #plt.ylabel("DNase signal (GM12878 rep1)")
+    #plt.xlabel("DNase signal (GM12878 rep2)")
+    #plt.savefig("gm_replicate_concordance.svg")
+    #plt.close()
