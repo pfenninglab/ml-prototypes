@@ -38,7 +38,7 @@ def get_model(numLabels, numConvLayers, numConvFilters, preLastLayerUnits, pooli
                         padding="valid",
                         strides=1,
                         activation="relu",
-                        kernel_size=8,
+                        kernel_size=kernelSize, #changed to kernelSize, originally set manually to 8
                         filters=1000,
                         use_bias=True)
 
@@ -46,7 +46,9 @@ def get_model(numLabels, numConvLayers, numConvFilters, preLastLayerUnits, pooli
     model.add(conv1_layer)
     reg="None"
     if regularization=='l1':
-        reg=regularizers.l1(0.0001)
+        reg=regularizers.l1(10**-6)
+    elif regularization=='l2':
+        reg=regularizers.l2(10**-6)
 
     for i in range(numConvLayers-1):
         if reg=="None":
