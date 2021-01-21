@@ -44,12 +44,12 @@ def get_model(numLabels, numConvLayers, numConvFilters, preLastLayerUnits, pooli
 
 
     model.add(conv1_layer)
-    reg="None"
+    reg = "None"
     if regularization=='l1':
         reg=regularizers.l1(10**-6)
     elif regularization=='l2':
         reg=regularizers.l2(10**-6)
-
+    
     for i in range(numConvLayers-1):
         if reg=="None":
             convn_layer = Conv1D(padding="valid",
@@ -155,5 +155,7 @@ if __name__=="__main__":
                      learningRate=args.learning_rate,
                      momentum=args.momentum,
                      length=args.length,
-                     pretrainedModel=args.pretrained_model,kernelSize=args.kernel_size,regularization=args.regularization
+                     pretrainedModel=args.pretrained_model,
+                     kernelSize=args.kernel_size,
+                     regularization=args.regularization
                     )
